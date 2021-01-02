@@ -7,7 +7,7 @@ namespace SlotMachineApi.Models
 {
     public class SlotResponse
     {
-        public string UserName { get; set; }
+        public string UserId { get; set; }
         
         public decimal Balance { get; set; }
 

@@ -20,10 +20,10 @@ namespace SlotMachineApi.Services
         }
 
         public List<SlotMachine> Get() =>
-            _slotUsers.Find(book => true).ToList();
+            _slotUsers.Find(slotMachine => true).ToList();
 
-        public SlotMachine Get(string UserName) =>
-            _slotUsers.Find<SlotMachine>(user => user.UserName == UserName).FirstOrDefault();
+        public SlotMachine Get(string UserId) =>
+            _slotUsers.Find<SlotMachine>(slotMachine => slotMachine.UserId == UserId).FirstOrDefault();
 
         public SlotMachine Create(SlotMachine slotUser)
         {
@@ -31,13 +31,8 @@ namespace SlotMachineApi.Services
             return slotUser;
         }
 
-        public void Update(string UserName, SlotMachine slotUserIn) =>
-            _slotUsers.ReplaceOne(user => user.UserName == UserName, slotUserIn);
+        public void Update(string UserId, SlotMachine slotUserIn) =>
+            _slotUsers.ReplaceOne(slotMachine => slotMachine.UserId == UserId, slotUserIn);
 
-/*        public void Remove(Book bookIn) =>
-            _books.DeleteOne(book => book.Id == bookIn.Id);
-
-        public void Remove(string id) =>
-            _books.DeleteOne(book => book.Id == id);*/
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SlotMachineApi.Models;
@@ -9,41 +10,42 @@ using SlotMachineApi.Services;
 
 namespace SlotMachineApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SlotMachineController : ControllerBase
     {
         private readonly SlotMachineService _slotMachineService;
-        private readonly UserService _userService;
         private readonly ConfigurationService _configService;
 
-        public SlotMachineController(SlotMachineService slotMachineService, UserService userService, ConfigurationService configService)
+        public SlotMachineController(SlotMachineService slotMachineService, ConfigurationService configService)
         {
             _slotMachineService = slotMachineService;
             _configService = configService;
-            _userService = userService;
         }
 
-        [HttpGet("{name}", Name = "GetUser")]
-        public ActionResult<SlotMachine> Get(string name)
+        [HttpGet]
+        public ActionResult<SlotMachine> Get()
         {
-            var slotUser = _slotMachineService.Get(name);
+            /*var slotUser = _slotMachineService.Get(name);*/
+            var slotUser = _slotMachineService.Get(GetUserId());
 
             if (slotUser == null)
             {
-                return NotFound();
+                return NotFound("User Not found");
             }
 
             return slotUser;
         }
 
         [HttpPost]
-        public ActionResult<SlotResponse> CalculateWin([FromForm] string name, [FromForm] decimal amount)
+        public ActionResult<SlotResponse> CalculateWin([FromForm] decimal amount)
         {
-            var slotUser = _slotMachineService.Get(name);
+            /*var slotUser = _slotMachineService.Get(name);*/
+            var slotUser = _slotMachineService.Get(GetUserId());
             if (slotUser == null)
             {
-                return NotFound();
+                return NotFound("User not found");
             }
             if(slotUser.Balance < amount)
             {
@@ -88,13 +90,23 @@ namespace SlotMachineApi.Controllers
 
             finalResponse.Balance = slotUser.Balance - amount + finalWin;
             finalResponse.spinArray = bet;
-            finalResponse.UserName = slotUser.UserName;
+            finalResponse.UserId = slotUser.UserId;
             finalResponse.WinAmount = finalWin;
 
             slotUser.Balance = slotUser.Balance - amount + finalWin;
-            _slotMachineService.Update(slotUser.UserName, slotUser);
+            _slotMachineService.Update(slotUser.UserId, slotUser);
 
             return finalResponse;
+        }
+
+        protected string GetUserId()
+        {
+            return this.User.Claims.First(i => i.Type == "Id").Value;
+        }
+
+        protected string GetUserName()
+        {
+            return this.User.Claims.First(i => i.Type == "Name").Value;
         }
     }
 }

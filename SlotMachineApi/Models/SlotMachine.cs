@@ -14,7 +14,7 @@ namespace SlotMachineApi.Models
         public string Id { get; set; }
 
         /*[BsonElement("Name")]*/
-        public string UserName { get; set; }
+        public string UserId { get; set; }
 
         public decimal Balance { get; set; }
     }
