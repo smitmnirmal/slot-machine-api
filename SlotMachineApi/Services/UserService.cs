@@ -22,8 +22,8 @@ namespace SlotMachineApi.Services
         public List<User> Get() =>
             _user.Find(user => true).ToList();
 
-        public User Get(string Id) =>
-            _user.Find<User>(user => user.Id == Id).FirstOrDefault();
+        public User Get(string Name) =>
+            _user.Find<User>(user => user.UserName == Name).FirstOrDefault();
 
         public User Create(User user)
         {
@@ -31,13 +31,8 @@ namespace SlotMachineApi.Services
             return user;
         }
 
-        public void Update(string Id, User userIn) =>
-            _user.ReplaceOne(user => user.Id == Id, userIn);
+        public void Update(string Name, User userIn) =>
+            _user.ReplaceOne(user => user.UserName == Name, userIn);
 
-        /*        public void Remove(Book bookIn) =>
-                    _books.DeleteOne(book => book.Id == bookIn.Id);
-
-                public void Remove(string id) =>
-                    _books.DeleteOne(book => book.Id == id);*/
     }
 }
